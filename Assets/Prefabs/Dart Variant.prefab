@@ -92,22 +92,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &-7314944059973654059
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 668970102384475759}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
 --- !u!1001 &8820658130270873446
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -192,12 +176,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78e2c4754c557424b9b5e0fe84c36318, type: 3}
---- !u!1 &668970102384475759 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 78e2c4754c557424b9b5e0fe84c36318,
-    type: 3}
-  m_PrefabInstance: {fileID: 8820658130270873446}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4545241548998921340 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 78e2c4754c557424b9b5e0fe84c36318,
