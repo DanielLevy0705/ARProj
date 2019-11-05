@@ -1,40 +1,90 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
 public class PlacementManager : MonoBehaviour
 {
     private ARRaycastManager rayManager;
-    private ARSessionOrigin aRSessionOrigin;
+    public Camera arCamera;
     private Touch touch;
     private Vector2 touchPose,endTouchPose;
     private bool first = true;
+    private bool firstSwipe = false;
+    private bool swiped = false;
+    private bool gotPosition = false;
     public GameObject dart;
-    public GameObject tapToPlaceText;
+    private GameObject dartInstance;
+    public Text tapToPlaceText;
+    public Text camPosition;
+    float xPos=0,yPos=0;
     void Start()
     {
         rayManager = FindObjectOfType<ARRaycastManager>();
-        aRSessionOrigin = FindObjectOfType<ARSessionOrigin>();
     }
 
     void Update()
     {
         if(first){
-            if(Input.touchCount > 0){
-                first = false;
-                touch = Input.GetTouch(0);
-                touchPose = touch.position;
-                tapToPlaceText.SetActive(false);
-                if(!dart.activeInHierarchy){
-                    dart.SetActive(true);
-                }
-                Vector3 pose = new Vector3(aRSessionOrigin.transform.position.x + touchPose.x,
-                aRSessionOrigin.transform.position.y+touchPose.y,aRSessionOrigin.transform.position.z+1);
-                aRSessionOrigin.MakeContentAppearAt(dart.transform,pose,Quaternion.identity);
-                
+            CreateDart();
+        }
+        SwipeDart();
+    }
+    private void CreateDart(){
+            first = false;
+            Vector3 pos = new Vector3(arCamera.transform.position.x,arCamera.transform.position.y-0.5f,arCamera.transform.position.z+0.7f);
+            //create the dart object.
+            dartInstance = Instantiate(dart,pos,Quaternion.identity);
+            //change the dart rotation.
+            dartInstance.transform.rotation = Quaternion.Euler(190,0,-135);
+    }
+    private void SwipeDart(){
+        if(Input.touchCount>0){
+            if(!firstSwipe){
+                GetSwipe();
             }
+        }
+        if(swiped){
+            //normalize the arrow position.
+            if(!gotPosition){
+                //*****************************TEST TEXT************************
+                tapToPlaceText.text = touchPose.ToString();
+                camPosition.text = endTouchPose.ToString();
+                //*****************************END OF TEST TEXT*****************
+                gotPosition = true;
+                //get distance between swipe start and end.
+                xPos = Mathf.Sqrt((touchPose.x-endTouchPose.x)*(touchPose.x-endTouchPose.x));
+                if(touchPose.x > endTouchPose.x){
+                    xPos = -xPos;
+                }
+                yPos = Mathf.Sqrt((touchPose.y-endTouchPose.y)*(touchPose.y-endTouchPose.y));
+                if(touchPose.y > endTouchPose.y){
+                    yPos = -yPos;
+                }
+                //normalize x and y.
+                xPos = xPos/30000f;
+                yPos = yPos/40000f;
+            }
+            //make the dart move.
+            dartInstance.transform.position += new Vector3(xPos,yPos,0.025f);
+        }
+    }
+    private void GetSwipe(){
+        
+        touch = Input.GetTouch(0);
+        switch(touch.phase){
+            case TouchPhase.Began:
+                touchPose = touch.position;
+                break;
+            case TouchPhase.Ended:
+                endTouchPose = touch.position;
+                if(touchPose != endTouchPose){
+                    firstSwipe = true;
+                    swiped = true;
+                }
+                break;
         }
     }
 }
