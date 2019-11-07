@@ -30,9 +30,9 @@ public class PlacementManager : MonoBehaviour
                 if(!dart.activeInHierarchy){
                     dart.SetActive(true);
                 }
-                //Vector3 pose = new Vector3(aRSessionOrigin.transform.position.x + touchPose.x,
-            //    aRSessionOrigin.transform.position.y+touchPose.y,aRSessionOrigin.transform.position.z+1);
-              //  aRSessionOrigin.MakeContentAppearAt(dart.transform,pose,Quaternion.identity);
+                Vector3 pose = new Vector3(aRSessionOrigin.transform.position.x + touchPose.x,
+                aRSessionOrigin.transform.position.y+touchPose.y,aRSessionOrigin.transform.position.z+1);
+                aRSessionOrigin.MakeContentAppearAt(dart.transform,pose,Quaternion.identity);
                 
             }
         }
