@@ -51,7 +51,7 @@ public class GameControl : MonoBehaviour
 
     public void countdownFinished()
     {
-        text.text = "countdown finished";
+        
         initializeGame();
     }
 
@@ -81,8 +81,7 @@ public class GameControl : MonoBehaviour
         else if (isCountDownFinished)
         {
             timeSinceLastSpawn += Time.deltaTime;
-            if ((timeSinceLastSpawn >= targetSpawnTime))
-            //&& (!dart.isDartSwiped())
+            if ((timeSinceLastSpawn >= targetSpawnTime) && (!dart.isDartSwiped()))
             {
                 miss();
                 spawnTarget();
@@ -99,12 +98,11 @@ public class GameControl : MonoBehaviour
         target.locateTarget();
         timeSinceLastSpawn = 0;
         targetsCounter++;
-        text.text = "spawn";
     }
 
     private void initializeGame()
     {
-        //dart.createDart();
+        dart.createDart();
         target.initializeTarget();
         isFirstSpawn = false;
         isCountDownFinished = true;

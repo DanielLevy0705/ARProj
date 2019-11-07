@@ -31,19 +31,20 @@ public class PlacementManager : MonoBehaviour
     void Update()
     {
         pos = new Vector3(arCamera.transform.position.x,arCamera.transform.position.y-0.5f,arCamera.transform.position.z+0.7f);
-        if(first){
-            CreateDart();
+        if(!first){
+            //   createDart();
+            SwipeDart();
         }
-        SwipeDart();
         if(!swiped){
             dartInstance.transform.position = pos;
         }
         if(dartFront.collided){
+            tapToPlaceText.text = "Collided";
             OnFrontCollision();
             dartFront.collided = false;
         }
     }
-    private void CreateDart(){
+    public void createDart(){
             first = false;
             //create the dart object.
             dartInstance = Instantiate(dart,pos,Quaternion.identity);
@@ -85,6 +86,7 @@ public class PlacementManager : MonoBehaviour
                 rotChange+= (10/84);
                 dartInstance.transform.rotation = Quaternion.Euler(xRot-rotChange,yRot,zRot);
             }else{
+                GameControl.Instance.miss();
                 initDart();
             } 
         }
@@ -105,7 +107,7 @@ public class PlacementManager : MonoBehaviour
                 break;
         }
     }
-    private bool isDartSwiped(){
+    public bool isDartSwiped(){
         return swiped;
     }
     private void initDart(){
