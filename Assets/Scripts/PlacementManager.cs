@@ -116,7 +116,7 @@ public class PlacementManager : MonoBehaviour
         gotPosition = false;
     }
     private void OnFrontCollision(){
-        GameControl.Instance.Score();
+        GameControl.Instance.score();
         initDart();
     }
 }
