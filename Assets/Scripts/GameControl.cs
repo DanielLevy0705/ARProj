@@ -18,11 +18,11 @@ public class GameControl : MonoBehaviour
 
     public Text text;
 
-    private float targetSpawnTime = 5f;
+    private float targetSpawnTime = 4f;
     private int lives = 5;
     private float timeSinceLastSpawn = 0;
     private int currentScore = 0;
-    private int numberOfTargetsInLevel = 5;
+    private int numberOfTargetsInLevel = 4;
     private int targetsCounter = 1;
 
     private ARRaycastManager arRaycastManager;
@@ -58,7 +58,7 @@ public class GameControl : MonoBehaviour
     public void score()
     {
         currentScore += 10;
-        text.text = currentScore.ToString();
+        //text.text = currentScore.ToString();
         spawnTarget();
     }
 
@@ -85,10 +85,10 @@ public class GameControl : MonoBehaviour
             {
                 miss();
                 spawnTarget();
-                if (targetsCounter == numberOfTargetsInLevel)
-                {
-                    changeSpawnRate();
-                }
+            }
+            if (targetsCounter >= numberOfTargetsInLevel)
+            {
+                changeSpawnRate();
             }
         }
     }
@@ -98,6 +98,7 @@ public class GameControl : MonoBehaviour
         target.locateTarget();
         timeSinceLastSpawn = 0;
         targetsCounter++;
+        text.text = targetsCounter.ToString();
     }
 
     private void initializeGame()
@@ -121,7 +122,7 @@ public class GameControl : MonoBehaviour
         if (targetSpawnTime > 0.5f)
         {
             targetSpawnTime -= 0.5f;
-            targetsCounter = 0;
+            targetsCounter = 1;
         }
     }
 }
