@@ -17,9 +17,12 @@ public class PlacementManager : MonoBehaviour
     private bool gotPosition = false;
     public GameObject dart;
     private GameObject dartInstance;
+    private CollisionDetector dartFront;
+    private Vector3 pos;
     public Text tapToPlaceText;
     public Text camPosition;
-    float xPos=0,yPos=0;
+    private float xPos=0,yPos=0,zPos = 0.025f,xRot = 190,yRot =0,zRot = -135;
+    private float rotChange = 0;
     void Start()
     {
         rayManager = FindObjectOfType<ARRaycastManager>();
@@ -27,18 +30,27 @@ public class PlacementManager : MonoBehaviour
 
     void Update()
     {
+        pos = new Vector3(arCamera.transform.position.x,arCamera.transform.position.y-0.5f,arCamera.transform.position.z+0.7f);
         if(first){
             CreateDart();
         }
         SwipeDart();
+        if(!swiped){
+            dartInstance.transform.position = pos;
+        }
+        if(dartFront.collided){
+            OnFrontCollision();
+            dartFront.collided = false;
+        }
     }
     private void CreateDart(){
             first = false;
-            Vector3 pos = new Vector3(arCamera.transform.position.x,arCamera.transform.position.y-0.5f,arCamera.transform.position.z+0.7f);
             //create the dart object.
             dartInstance = Instantiate(dart,pos,Quaternion.identity);
+            //get the dart Front.
+            dartFront = dartInstance.transform.GetChild(1).gameObject.GetComponent<CollisionDetector>();
             //change the dart rotation.
-            dartInstance.transform.rotation = Quaternion.Euler(190,0,-135);
+            dartInstance.transform.rotation = Quaternion.Euler(xRot,yRot,zRot);
     }
     private void SwipeDart(){
         if(Input.touchCount>0){
@@ -68,7 +80,13 @@ public class PlacementManager : MonoBehaviour
                 yPos = yPos/40000f;
             }
             //make the dart move.
-            dartInstance.transform.position += new Vector3(xPos,yPos,0.025f);
+            if(dartInstance.transform.position.z < 2.8f){
+                dartInstance.transform.position += new Vector3(xPos,yPos,zPos);
+                rotChange+= (10/84);
+                dartInstance.transform.rotation = Quaternion.Euler(xRot-rotChange,yRot,zRot);
+            }else{
+                initDart();
+            } 
         }
     }
     private void GetSwipe(){
@@ -86,5 +104,19 @@ public class PlacementManager : MonoBehaviour
                 }
                 break;
         }
+    }
+    private bool isDartSwiped(){
+        return swiped;
+    }
+    private void initDart(){
+        dartInstance.transform.position = pos;
+        dartInstance.transform.rotation = Quaternion.Euler(xRot,yRot,zRot);
+        firstSwipe = false;
+        swiped = false;
+        gotPosition = false;
+    }
+    private void OnFrontCollision(){
+        GameControl.Instance.Score();
+        initDart();
     }
 }
