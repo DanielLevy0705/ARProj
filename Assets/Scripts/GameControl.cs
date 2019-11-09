@@ -33,7 +33,6 @@ public class GameControl : MonoBehaviour
     private int currentScore = 0;
     private int numberOfTargetsInLevel = 4;
     private int targetsCounter = 1;
-    private AudioMic audioMic = GetComponent<AudioMic>();
     private bool isRoundOn = false;
     private int roundCounter = 0;
     private float timeSinceRoundOn = 0;
@@ -41,6 +40,7 @@ public class GameControl : MonoBehaviour
     private ARRaycastManager arRaycastManager;
     private List<ARRaycastHit> hits;
     private bool isFirstSpawn = true;
+    private bool _canScream = true;
     public GameObject arCamera;
 
     void Awake()
@@ -59,6 +59,7 @@ public class GameControl : MonoBehaviour
     {
         arRaycastManager = FindObjectOfType<ARRaycastManager>();
         hits = new List<ARRaycastHit>();
+        
     }
 
     public void countdownFinished()
@@ -184,7 +185,7 @@ public class GameControl : MonoBehaviour
     public void changeSpawnRate()
     {
         //when spawnRate changes, allow to scream again.
-        audioMic.screamAble = true;
+        setScream(true);
         roundOn();
         if (targetSpawnTime > 0.5f)
         {
@@ -205,5 +206,11 @@ public class GameControl : MonoBehaviour
     public void rematch()
     {
         SceneManager.LoadScene(0);
+    }
+    public bool canScream(){
+        return !isFirstSpawn && _canScream;
+    }
+    public void setScream(bool value){
+        _canScream = value;
     }
 }

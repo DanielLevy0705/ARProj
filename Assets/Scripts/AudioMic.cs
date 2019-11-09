@@ -4,28 +4,30 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Android;
 
+//uncomment comments to check targets!
 public class AudioMic : MonoBehaviour
 {
-    //public AudioClip clip;
-    //public AudioSource src;
     public Text text;
     public float max = 0;
-    public GameObject target;
+    public GameObject[] targets;
+    public GameObject target1;
+    public GameObject target2;
+    public GameObject target3;
+    public GameObject target4;
+    public GameObject target5;
     public PlacementManager dart;
     public float testSound;
     public static float MicLoudness;
-    public bool screamAble = true;
     private string _device;
     private float timeSinceScream = 0;
     private float screamTime = 0.5f;
-    //private int screamsLeft = 3;
     private AudioClip _clipRecord/* = new AudioClip()*/;
     private int _sampleWindow = 128;
     private bool _isInitialized;
+    //private int index = 0;
     private bool screamed = false;
-    private Vector3 newSize = new Vector3(2.5f,2.5f,2.5f);
+    private Vector3 newSize = new Vector3(2.5f,2.5f,1.8f);
     private Vector3 originalSize = new Vector3(1.8f,1.8f,1.8f);
-    //public AudioSource Pingsrc;
 
     void InitMic()
     {
@@ -75,17 +77,17 @@ public class AudioMic : MonoBehaviour
             // Ask for permission or proceed without the functionality enabled.
             Permission.RequestUserPermission(Permission.Microphone);
         }
-        //src.clip = clip;
+        targets = new GameObject[5];
+        targets[0] = target1;
+        targets[1] = target2;
+        targets[2] = target3;
+        targets[3] = target4;
+        targets[4] = target5;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if there are no screams left, just return.
-        if(!screamAble){
-            return;
-        }
-
         //count time since scream.
         if(screamed){
             timeSinceScream += Time.deltaTime;
@@ -94,7 +96,23 @@ public class AudioMic : MonoBehaviour
         if(timeSinceScream>screamTime && !dart.isDartSwiped()){
             //set screamed,scale and timeSinceScream to original value.
             screamed = false;
-            target.transform.localScale = originalSize;
+            // switch(index){
+            //     case 0:
+            //         target1.transform.localScale = originalSize;
+            //         break;
+            //     case 1:
+            //         target2.transform.localScale = originalSize;
+            //         break;
+            //     case 2:
+            //         target3.transform.localScale = originalSize;
+            //         break;
+            //     case 3:
+            //         target4.transform.localScale = originalSize;
+            //         break;
+            //     case 4:
+            //         target5.transform.localScale = originalSize;
+            //         break;
+            // }
             timeSinceScream = 0;
         }
         //get microphone input.
@@ -104,18 +122,34 @@ public class AudioMic : MonoBehaviour
             max = testSound;
         }
         //if its not loud enough return.
-        if (testSound < 300 )
+        if (testSound < 200)
         {
             return;
         }
-        //if the dart is swiped and the input is loud enough
-        if(dart.isDartSwiped()){
-            //do scream actions.
-            screamAble = false;
-            screamed = true;
-            timeSinceScream=0;
-            target.transform.localScale = newSize;
-        }
+        text.text = testSound.ToString();
+        // if(GameControl.Instance.canScream() && dart.isDartSwiped()){
+        //     GameControl.Instance.setScream(false);
+        //     screamed = true;
+        //     timeSinceScream = 0;
+        //     index = GameControl.Instance.target.targetIndex();
+        //     switch(index){
+        //         case 0:
+        //             target1.transform.localScale = newSize;
+        //             break;
+        //         case 1:
+        //             target2.transform.localScale = newSize;
+        //             break;
+        //         case 2:
+        //             target3.transform.localScale = newSize;
+        //             break;
+        //         case 3:
+        //             target4.transform.localScale = newSize;
+        //             break;
+        //         case 4:
+        //             target5.transform.localScale = newSize;
+        //             break;
+        //     }
+        //}
     }
 
     void OnEnable()

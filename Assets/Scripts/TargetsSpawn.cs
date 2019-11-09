@@ -15,7 +15,6 @@ public class TargetsSpawn : MonoBehaviour
     public GameObject target4;
     public GameObject target5;
     public GameObject[] targets;
-
     private int previousTargetIndex = 0;
     private int currentTargetIndex = 0;
     private int tempIndex = 0;
@@ -68,5 +67,8 @@ public class TargetsSpawn : MonoBehaviour
         //currentTarget.SetActive(true);
         text.text = targets[currentTargetIndex].transform.position.ToString();
         isFirst = false;
+    }
+    public int targetIndex(){
+        return currentTargetIndex;
     }
 }
