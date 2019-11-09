@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Drawing;
 
 public class CountDown : MonoBehaviour
 {
@@ -12,22 +14,26 @@ public class CountDown : MonoBehaviour
     public bool run = false;
     public bool isGo = false;
     public bool isFinished = false;
+    public bool isFirst = false;
 
     void Update()
     {
         if (run)
         {
+            if(isFirst)
+            {
+                text.fontSize = 130;
+            }
             timeoutCount += Time.deltaTime;
             if (timeoutCount >= 1f)
             {
-                text.text = "after timecount is 1";
                 if (counter == 4)
                 {
-                    text.text = "Game Is About To Start!";
+                    setText("Game Is About To Start!");
                 }
                 else if (counter > 0)
                 {
-                    text.text = counter.ToString(); ;
+                    setText(counter.ToString());
                 }
                 else if(isGo)
                 {
@@ -36,7 +42,7 @@ public class CountDown : MonoBehaviour
                 }
                 else
                 {
-                    text.text = "GO!";
+                    setText("GO!");
                     isGo = true;
                 }
                 timeoutCount = 0;
@@ -44,8 +50,25 @@ public class CountDown : MonoBehaviour
             }
             if (isFinished)
             {
-                textObject.SetActive(false);
+                text.fontSize = 80;
+                textVisibility(false);
             }
         }
+    }
+
+    public void randomColor()
+    {
+        text.material.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+    }
+
+    internal void textVisibility(bool v)
+    {
+        textObject.SetActive(v);
+    }
+
+    internal void setText(string v)
+    {
+        randomColor();
+        text.text = v;
     }
 }

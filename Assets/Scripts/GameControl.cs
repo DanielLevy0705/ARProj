@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using UnityEngine.SceneManagement;
 
 public class GameControl : MonoBehaviour
 {
@@ -15,15 +16,29 @@ public class GameControl : MonoBehaviour
     public CountDown countDown;
 
     private bool isCountDownFinished = false;
+    private bool isGameOver = false;
 
-    public Text text;
+    public GameObject gameTexts;
+
+    public GameObject rematchButton;
+    public Text buttonText;
+
+    public AudioSource gameOVerAudio;
+
+    public Text livesText;
+    public Text scoreText;
 
     private float targetSpawnTime = 4f;
     private int lives = 5;
     private float timeSinceLastSpawn = 0;
+    private float timeSinceColorChange = 0;
     private int currentScore = 0;
     private int numberOfTargetsInLevel = 4;
     private int targetsCounter = 1;
+
+    private bool isRoundOn = false;
+    private int roundCounter = 0;
+    private float timeSinceRoundOn = 0;
 
     private ARRaycastManager arRaycastManager;
     private List<ARRaycastHit> hits;
@@ -46,51 +61,97 @@ public class GameControl : MonoBehaviour
     {
         arRaycastManager = FindObjectOfType<ARRaycastManager>();
         hits = new List<ARRaycastHit>();
-        text.text = "no";
     }
 
     public void countdownFinished()
     {
-        
+
         initializeGame();
     }
 
     public void score()
     {
         currentScore += 10;
-        //text.text = currentScore.ToString();
+        scoreText.text = "Score: " + currentScore.ToString();
         spawnTarget();
     }
 
     public void miss()
     {
         lives--;
+        if (lives == 0)
+        {
+           gameOver();
+        }
+        else
+        {
+            livesText.text = "Lives: " + lives.ToString();
+        }
+    }
+
+    private void gameOver()
+    {
+        timeSinceLastSpawn = 0;
+        isGameOver = true;
+        gameOVerAudio.Play();
+        countDown.textVisibility(true);
+        countDown.setText("GAME OVER!\r\n" + "Your Score Is: " + currentScore.ToString());
+        rematchButton.gameObject.SetActive(true);
+        scoreText.enabled = false;
+        livesText.enabled = false;
+        dart.enabled = false;
     }
 
     void Update()
     {
-        if (isFirstSpawn)
+        if (!isGameOver)
         {
-            if (findSurface())
+            if (isFirstSpawn)
             {
-                text.text = "surface located";
-                isFirstSpawn = false;
-                countDown.run = true;
+                if (findSurface())
+                {
+                    isFirstSpawn = false;
+                    countDown.run = true;
+                }
+            }
+            else if (isCountDownFinished)
+            {
+                if(isRoundOn)
+                {
+                    timeSinceRoundOn += Time.deltaTime;
+                    if(timeSinceRoundOn >= 2f)
+                    {
+                        isRoundOn = false;
+                        countDown.textVisibility(false);
+                    }
+                }
+                timeSinceLastSpawn += Time.deltaTime;
+                if ((timeSinceLastSpawn >= targetSpawnTime) && (!dart.isDartSwiped()))
+                {
+                    miss();
+                    spawnTarget();
+                }
+                if (targetsCounter >= numberOfTargetsInLevel)
+                {
+                    changeSpawnRate();
+                }
             }
         }
-        else if (isCountDownFinished)
+        else
         {
-            timeSinceLastSpawn += Time.deltaTime;
-            if ((timeSinceLastSpawn >= targetSpawnTime) && (!dart.isDartSwiped()))
+            timeSinceColorChange += Time.deltaTime;
+            if(timeSinceColorChange >= 1f)
             {
-                miss();
-                spawnTarget();
-            }
-            if (targetsCounter >= numberOfTargetsInLevel)
-            {
-                changeSpawnRate();
+                timeSinceColorChange = 0;
+                changeButtonColor();
             }
         }
+    }
+
+    private void changeButtonColor()
+    {
+        buttonText.material.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        rematchButton.GetComponent<Button>().GetComponent<Image>().color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
     }
 
     private void spawnTarget()
@@ -98,16 +159,21 @@ public class GameControl : MonoBehaviour
         target.locateTarget();
         timeSinceLastSpawn = 0;
         targetsCounter++;
-        text.text = targetsCounter.ToString();
     }
 
     private void initializeGame()
     {
+        gameTexts.SetActive(true);
+        livesText.material.color = Color.red;
+        scoreText.material.color = Color.red;
+        livesText.text = "Lives: " + lives.ToString();
+        scoreText.text = "Score: 0";
         dart.createDart();
         target.initializeTarget();
         isFirstSpawn = false;
         isCountDownFinished = true;
         countDown.run = false;
+        roundOn();
     }
 
 
@@ -118,11 +184,25 @@ public class GameControl : MonoBehaviour
 
     public void changeSpawnRate()
     {
-        text.text = "change spawn rate";
+        roundOn();
         if (targetSpawnTime > 0.5f)
         {
             targetSpawnTime -= 0.5f;
             targetsCounter = 1;
         }
+    }
+
+    private void roundOn()
+    {
+        timeSinceRoundOn = 0;
+        roundCounter++;
+        countDown.textVisibility(true);
+        countDown.setText("Round " + roundCounter.ToString());
+        isRoundOn = true;
+    }
+
+    public void rematch()
+    {
+        SceneManager.LoadScene(0);
     }
 }

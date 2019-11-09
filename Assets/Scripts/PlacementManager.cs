@@ -23,6 +23,11 @@ public class PlacementManager : MonoBehaviour
     public Text camPosition;
     private float xPos=0,yPos=0,zPos = 0.025f,xRot = 190,yRot =0,zRot = -135;
     private float rotChange = 0;
+
+    public AudioSource throwSound;
+    public AudioSource hitSound;
+    public AudioSource missSound;
+
     void Start()
     {
         rayManager = FindObjectOfType<ARRaycastManager>();
@@ -86,6 +91,7 @@ public class PlacementManager : MonoBehaviour
                 rotChange+= (10/84);
                 dartInstance.transform.rotation = Quaternion.Euler(xRot-rotChange,yRot,zRot);
             }else{
+                missSound.Play();
                 GameControl.Instance.miss();
                 initDart();
             } 
@@ -101,6 +107,7 @@ public class PlacementManager : MonoBehaviour
             case TouchPhase.Ended:
                 endTouchPose = touch.position;
                 if(touchPose != endTouchPose){
+                    throwSound.Play();
                     firstSwipe = true;
                     swiped = true;
                 }
@@ -118,6 +125,7 @@ public class PlacementManager : MonoBehaviour
         gotPosition = false;
     }
     private void OnFrontCollision(){
+        hitSound.Play();
         GameControl.Instance.score();
         initDart();
     }
