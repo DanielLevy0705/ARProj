@@ -14,6 +14,7 @@ public class AudioMic : MonoBehaviour
     public PlacementManager dart;
     public float testSound;
     public static float MicLoudness;
+    public bool screamAble = true;
     private string _device;
     private float timeSinceScream = 0;
     private float screamTime = 0.5f;
@@ -81,9 +82,9 @@ public class AudioMic : MonoBehaviour
     void Update()
     {
         //if there are no screams left, just return.
-        // if(screamsLeft <= 0){
-        //     return;
-        // }
+        if(!screamAble){
+            return;
+        }
 
         //count time since scream.
         if(screamed){
@@ -103,14 +104,14 @@ public class AudioMic : MonoBehaviour
             max = testSound;
         }
         //if its not loud enough return.
-        if (testSound < 300)
+        if (testSound < 300 )
         {
             return;
         }
         //if the dart is swiped and the input is loud enough
         if(dart.isDartSwiped()){
             //do scream actions.
-            //screamsLeft--;
+            screamAble = false;
             screamed = true;
             timeSinceScream=0;
             target.transform.localScale = newSize;
