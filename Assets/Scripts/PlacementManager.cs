@@ -15,24 +15,24 @@ public class PlacementManager : MonoBehaviour
     private bool firstSwipe = false;
     private bool swiped = false;
     private bool gotPosition = false;
+    private int numOfFrames = 0;
     public GameObject dart;
     private GameObject dartInstance;
     private CollisionDetector dartFront;
     private Vector3 pos;
+    private float camZpos;
     public Text tapToPlaceText;
     public Text camPosition;
     private float xPos=0,yPos=0,zPos = 0.025f,xRot = 190,yRot =0,zRot = -135;
     private float rotChange = 0;
     void Start()
     {
-        rayManager = FindObjectOfType<ARRaycastManager>();
     }
 
     void Update()
     {
         pos = new Vector3(arCamera.transform.position.x,arCamera.transform.position.y-0.5f,arCamera.transform.position.z+0.7f);
         if(!first){
-            //   createDart();
             SwipeDart();
         }
         if(!swiped){
@@ -62,10 +62,6 @@ public class PlacementManager : MonoBehaviour
         if(swiped){
             //normalize the arrow position.
             if(!gotPosition){
-                //*****************************TEST TEXT************************
-                tapToPlaceText.text = touchPose.ToString();
-                camPosition.text = endTouchPose.ToString();
-                //*****************************END OF TEST TEXT*****************
                 gotPosition = true;
                 //get distance between swipe start and end.
                 xPos = Mathf.Sqrt((touchPose.x-endTouchPose.x)*(touchPose.x-endTouchPose.x));
@@ -79,12 +75,18 @@ public class PlacementManager : MonoBehaviour
                 //normalize x and y.
                 xPos = xPos/30000f;
                 yPos = yPos/40000f;
+                numOfFrames = 0;
+                camZpos = GameControl.Instance.camZPos;
             }
             //make the dart move.
-            if(dartInstance.transform.position.z < 2.8f){
+            if(dartInstance.transform.position.z < camZpos+2.55f){
                 dartInstance.transform.position += new Vector3(xPos,yPos,zPos);
-                rotChange+= (10/84);
-                dartInstance.transform.rotation = Quaternion.Euler(xRot-rotChange,yRot,zRot);
+                //get to 180 degrees rotation.
+                if(numOfFrames<74){
+                    rotChange+= (10/74);
+                    numOfFrames++;
+                    dartInstance.transform.rotation = Quaternion.Euler(xRot-rotChange,yRot,zRot);
+                }
             }else{
                 GameControl.Instance.miss();
                 initDart();

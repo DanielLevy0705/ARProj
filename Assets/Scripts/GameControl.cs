@@ -17,7 +17,7 @@ public class GameControl : MonoBehaviour
     private bool isCountDownFinished = false;
 
     public Text text;
-
+    public float camZPos=0;
     private float targetSpawnTime = 4f;
     private int lives = 5;
     private float timeSinceLastSpawn = 0;
@@ -96,6 +96,7 @@ public class GameControl : MonoBehaviour
     private void spawnTarget()
     {
         target.locateTarget();
+        camZPos = arCamera.transform.position.z;
         timeSinceLastSpawn = 0;
         targetsCounter++;
         text.text = targetsCounter.ToString();
