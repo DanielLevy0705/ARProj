@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
@@ -164,8 +162,6 @@ public class GameControl : MonoBehaviour
     private void initializeGame()
     {
         gameTexts.SetActive(true);
-        livesText.material.color = Color.red;
-        scoreText.material.color = Color.red;
         livesText.text = "Lives: " + lives.ToString();
         scoreText.text = "Score: 0";
         dart.createDart();

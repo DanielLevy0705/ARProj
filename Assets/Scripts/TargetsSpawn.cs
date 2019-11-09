@@ -12,10 +12,13 @@ public class TargetsSpawn : MonoBehaviour
     public GameObject target1;
     public GameObject target2;
     public GameObject target3;
+    public GameObject target4;
+    public GameObject target5;
     public GameObject[] targets;
 
     private int previousTargetIndex = 0;
     private int currentTargetIndex = 0;
+    private int tempIndex = 0;
 
     private bool isFirst = true;
 
@@ -23,26 +26,33 @@ public class TargetsSpawn : MonoBehaviour
 
     Vector3 cameraPos;
     float x, y;
-    
+
     void Start()
     {
-        targets = new GameObject[3];
+        targets = new GameObject[5];
         targets[0] = target1;
         targets[1] = target2;
         targets[2] = target3;
+        targets[3] = target4;
+        targets[4] = target5;
     }
 
     public void targetRandomizer()
     {
-        if(!isFirst)
+        if (!isFirst)
         {
             previousTargetIndex = currentTargetIndex;
             targets[previousTargetIndex].SetActive(false);
         }
-        currentTargetIndex = Random.Range(0, 3);
+        do
+        {
+            tempIndex = Random.Range(0, 5);
+        }
+        while (tempIndex == currentTargetIndex);
+        currentTargetIndex = tempIndex;
         targets[currentTargetIndex].SetActive(true);
     }
-    
+
     public void locateTarget()
     {
         targetRandomizer();
