@@ -123,7 +123,10 @@ public class GameControl : MonoBehaviour
                         countDown.textVisibility(false);
                     }
                 }
-                timeSinceLastSpawn += Time.deltaTime;
+                if (!dart.isDartSwiped())
+                {
+                    timeSinceLastSpawn += Time.deltaTime;
+                }
                 if ((timeSinceLastSpawn >= targetSpawnTime) && (!dart.isDartSwiped()))
                 {
                     miss();
@@ -149,7 +152,6 @@ public class GameControl : MonoBehaviour
     private void changeButtonColor()
     {
         buttonText.material.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-        rematchButton.GetComponent<Button>().GetComponent<Image>().color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
     }
 
     private void spawnTarget()
