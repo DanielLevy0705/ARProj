@@ -21,8 +21,6 @@ public class PlacementManager : MonoBehaviour
     private CollisionDetector dartFront;
     private Vector3 pos;
     private float camZpos;
-    public Text tapToPlaceText;
-    public Text camPosition;
     private float xPos=0,yPos=0,zPos = 0.025f,xRot = 190,yRot =0,zRot = -135;
     private float rotChange = 0;
 
@@ -44,7 +42,6 @@ public class PlacementManager : MonoBehaviour
             dartInstance.transform.position = pos;
         }
         if(dartFront.collided){
-            tapToPlaceText.text = "Collided";
             OnFrontCollision();
             dartFront.collided = false;
         }

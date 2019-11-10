@@ -65,7 +65,6 @@ public class TargetsSpawn : MonoBehaviour
     {
         locateTarget();
         //currentTarget.SetActive(true);
-        text.text = targets[currentTargetIndex].transform.position.ToString();
         isFirst = false;
     }
     public int targetIndex(){

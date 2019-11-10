@@ -22,7 +22,7 @@ public class CountDown : MonoBehaviour
         {
             if(isFirst)
             {
-                text.fontSize = 130;
+                text.fontSize = 300;
             }
             timeoutCount += Time.deltaTime;
             if (timeoutCount >= 1f)

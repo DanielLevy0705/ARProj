@@ -40,8 +40,9 @@ public class GameControl : MonoBehaviour
     private ARRaycastManager arRaycastManager;
     private List<ARRaycastHit> hits;
     private bool isFirstSpawn = true;
-    private bool _canScream = true;
+
     public GameObject arCamera;
+    public AudioMic audioMic;
 
     void Awake()
     {
@@ -59,7 +60,8 @@ public class GameControl : MonoBehaviour
     {
         arRaycastManager = FindObjectOfType<ARRaycastManager>();
         hits = new List<ARRaycastHit>();
-        
+        livesText.material.color = Color.red;
+        scoreText.material.color = Color.red;
     }
 
     public void countdownFinished()
@@ -71,6 +73,11 @@ public class GameControl : MonoBehaviour
     public void score()
     {
         currentScore += 10;
+        if (audioMic.scream == true)
+        {
+            audioMic.scream = false;
+            currentScore += 40;
+        }
         scoreText.text = "Score: " + currentScore.ToString();
         spawnTarget();
     }
@@ -184,14 +191,15 @@ public class GameControl : MonoBehaviour
 
     public void changeSpawnRate()
     {
-        //when spawnRate changes, allow to scream again.
-        setScream(true);
+        audioMic.canScream = true;
         roundOn();
-        if (targetSpawnTime > 0.5f)
+        if (targetSpawnTime > 1f)
         {
             targetSpawnTime -= 0.5f;
             targetsCounter = 1;
         }
+        livesText.material.color = Color.red;
+        scoreText.material.color = Color.red;
     }
 
     private void roundOn()
@@ -206,11 +214,5 @@ public class GameControl : MonoBehaviour
     public void rematch()
     {
         SceneManager.LoadScene(0);
-    }
-    public bool canScream(){
-        return !isFirstSpawn && _canScream;
-    }
-    public void setScream(bool value){
-        _canScream = value;
     }
 }
